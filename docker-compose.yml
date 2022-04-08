@@ -1,0 +1,38 @@
+version: '3'
+
+networks:
+  backend:
+    driver: bridge
+services:
+  db:
+    image: mysql/mysql-server:8.0.26-1.2.4-server@sha256:5e373bcea878b3657937c68cdefa8a1504f53e356ac19a3e51bf515e41e0c48c
+    container_name: fs_db
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: fs
+      MYSQL_ROOT_HOST: '%'
+    volumes:
+        - ./fs-db/data:/var/lib/mysql
+        - ./fs-db/etc/my.cnf:/etc/my.cnf
+    ports:
+      - "4306:3306"
+    networks:
+      - backend
+  fs_client:
+    build: ./fs-lap
+    container_name: fs-client
+    depends_on:
+      - db
+    volumes:
+      - ./app:/app/
+      - ./fs-lap/php/conf.d/xdebug.ini:/usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+      - ./fs-lap/php/conf.d/error_reporting.ini:/usr/local/etc/php/error_reporting.ini/error_reporting.ini
+    ports:
+      - "8201:80"
+    stdin_open: true
+    tty: true
+    networks:
+      - backend
+    environment:
+      - php.short_open_tag=On
+      - WEB_DOCUMENT_ROOT=/app

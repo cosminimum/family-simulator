@@ -1,0 +1,41 @@
+<html>
+<head>
+    <title>Family Simulator</title>
+</head>
+<body>
+<h1>Family Simulator</h1>
+<form>
+    <input type="submit" data-action="add" name="mom" value="Add Mom" />
+    <input type="submit" data-action="add" name="dad" value="Add Dad" />
+    <input type="submit" data-action="add" name="child" value="Add Child" />
+    <input type="submit" data-action="add" name="adopted_child" value="Add Adopted Child" />
+    <input type="submit" data-action="add" name="cat" value="Add Cat" />
+    <input type="submit" data-action="add" name="dog" value="Add Dog" />
+    <input type="submit" data-action="add" name="goldfish" value="Add Goldfish" />
+    <input type="submit" data-action="remove" name="reset" value="Reset" />
+</form>
+
+<script src="../jquery-1.12.4.min.js"></script>
+<script type="text/javascript">
+    (function( $ ) {
+        $( 'input' ).on( 'click', function() {
+            $( 'input' ).removeAttr('data-clicked');
+            $( this ).attr('data-clicked', 'clicked');
+        })
+        $( 'form' ).on( 'submit', function( e ) {
+            e.preventDefault();
+
+            $.ajax({
+                method: "POST",
+                data: {
+                    member_type: $( '[data-clicked]' ).attr( 'name' ),
+                    action_type: $( '[data-clicked]' ).data( 'action' ),
+                }
+            }).done(function( error ) {
+                location.reload(true)
+            });
+        } );
+    })(jQuery);
+</script>
+</body>
+</html>
